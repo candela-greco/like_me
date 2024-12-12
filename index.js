@@ -22,7 +22,7 @@ app.post("/posts", async (req, res) => {
     const { img } = req.body;
     const { descripcion } = req.body;
 
-    if(!titulo){
+    if(!titulo || !img || !descripcion){
         return res.status(400).json({message: "Todos los campos son requeridos"});
     }
     const newPost = {
