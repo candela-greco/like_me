@@ -39,6 +39,40 @@ app.post("/posts", async (req, res) => {
     }
 });
 
+app.put ("/posts/:id", async (req, res) => {
+    const { id } = req.params;
+    const { titulo, img, descripcion } = req.body;
+
+    if (!titulo && !img && !descripcion) {
+        return res.status(400).json({ message: "Se requiere al menos un campo para actualizar" });
+    }
+    try {
+        const updatedPost = await likeMeModel.updatePost({ titulo, img, descripcion }, id);
+        return res.json({ message: "Post actualizado con éxito", post: updatedPost });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: "Error interno del servidor"});
+    }
+});
+
+app.delete("/posts/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const postEliminado = await likeMeModel.deletePost(id);
+        return res.json({
+            message: "Post eliminado con exito",
+            post: postEliminado
+        });
+    } catch (error) {
+        if (error.code === 404) {
+            res.status(404).json({ message: error.message });
+        } else {
+            console.error(error);
+            res.status(500).json({ message: "Error interno del servidor" });
+        }
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server listening on port http://localhost:${PORT}`);
 });
